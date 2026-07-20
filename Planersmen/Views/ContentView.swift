@@ -122,7 +122,7 @@ struct ShiftsView: View {
             }
             .sheet(isPresented: $isPresentingEditor) {
                 ShiftFormView(shift: editingShift) { newShift in
-                    if let editing = editingShift {
+                    if editingShift != nil {
                         store.update(newShift)
                     } else {
                         store.add(newShift)

@@ -26,7 +26,7 @@ extension Color {
         let sanitized = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var hexValue: UInt64 = 0
         Scanner(string: sanitized).scanHexInt64(&hexValue)
-        let mask = 0x000000FF
+        let mask: UInt64 = 0x000000FF
         let r = Double((hexValue >> 16) & mask) / 255
         let g = Double((hexValue >> 8) & mask) / 255
         let b = Double(hexValue & mask) / 255
