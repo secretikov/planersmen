@@ -8,6 +8,7 @@ struct Shift: Identifiable, Codable, Equatable {
     var endDate: Date
     var notes: String
     var colorName: String
+    var income: Double
 
     init(
         id: UUID = UUID(),
@@ -15,7 +16,8 @@ struct Shift: Identifiable, Codable, Equatable {
         startDate: Date,
         endDate: Date,
         notes: String = "",
-        colorName: String = "blue"
+        colorName: String = "blue",
+        income: Double = 0.0
     ) {
         self.id = id
         self.title = title
@@ -23,6 +25,7 @@ struct Shift: Identifiable, Codable, Equatable {
         self.endDate = endDate
         self.notes = notes
         self.colorName = colorName
+        self.income = income
     }
 }
 
@@ -62,16 +65,29 @@ final class ShiftStore: ObservableObject {
                 startDate: todayMorning,
                 endDate: todayEvening,
                 notes: "Проверить заявки и подготовить отчет",
-                colorName: "blue"
+                colorName: "blue",
+                income: 2500.0
             ),
             Shift(
                 title: "Вечерняя смена",
                 startDate: tomorrowNight,
                 endDate: tomorrowNight.addingTimeInterval(4 * 60 * 60),
                 notes: "Контроль закрытия смены",
-                colorName: "orange"
+                colorName: "orange",
+                income: 3000.0
             )
         ]
+    }
+
+    var totalIncome: Double {
+        items.reduce(0) { $0 + $1.income }
+    }
+
+    var averageDailyIncome: Double {
+        let calendar = Calendar.current
+        let uniqueDays = Set(items.map { calendar.startOfDay(for: $0.startDate) })
+        guard !uniqueDays.isEmpty else { return 0 }
+        return totalIncome / Double(uniqueDays.count)
     }
 
     func add(_ shift: Shift) {

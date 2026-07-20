@@ -10,6 +10,7 @@ struct ShiftFormView: View {
     @State private var endDate = Date().addingTimeInterval(3600)
     @State private var notes = ""
     @State private var colorName = "blue"
+    @State private var income: Double = 0.0
 
     init(shift: Shift?, onSave: @escaping (Shift) -> Void) {
         self.initialShift = shift
@@ -20,6 +21,7 @@ struct ShiftFormView: View {
         _endDate = State(initialValue: shift?.endDate ?? Date().addingTimeInterval(3600))
         _notes = State(initialValue: shift?.notes ?? "")
         _colorName = State(initialValue: shift?.colorName ?? "blue")
+        _income = State(initialValue: shift?.income ?? 0.0)
     }
 
     var body: some View {
@@ -40,6 +42,9 @@ struct ShiftFormView: View {
                             .tint(.cyan)
                         DatePicker("Окончание", selection: $endDate, displayedComponents: [.date, .hourAndMinute])
                             .tint(.cyan)
+                        TextField("Доход", value: $income, format: .number)
+                            .keyboardType(.decimalPad)
+                            .foregroundStyle(.white)
                         TextField("Заметки", text: $notes, axis: .vertical)
                             .lineLimit(3...6)
                             .foregroundStyle(.white)
@@ -86,7 +91,8 @@ struct ShiftFormView: View {
             startDate: startDate,
             endDate: endDate,
             notes: notes,
-            colorName: colorName
+            colorName: colorName,
+            income: income
         )
         onSave(shift)
         dismiss()
