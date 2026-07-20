@@ -47,12 +47,21 @@ struct FinancesView: View {
 
                     if financialStore.goals.isEmpty {
                         GlassPanel {
-                            ContentUnavailableView(
-                                "Пока нет целей",
-                                systemImage: "target",
-                                description: Text("Добавьте расходы, долги или вложения для распределения дохода")
-                            )
-                            .background(.clear)
+                            VStack(spacing: 8) {
+                                Image(systemName: "target")
+                                    .font(.system(size: 44))
+                                    .foregroundStyle(.secondary)
+                                    .padding(.bottom, 4)
+                                Text("Пока нет целей")
+                                    .font(.title2.weight(.bold))
+                                    .foregroundStyle(.white)
+                                Text("Добавьте расходы, долги или вложения для распределения дохода")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                    .multilineTextAlignment(.center)
+                            }
+                            .padding()
+                            .frame(maxWidth: .infinity)
                         }
                         .padding(.horizontal)
                         .padding(.top, 8)

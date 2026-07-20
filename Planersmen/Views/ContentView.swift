@@ -80,12 +80,21 @@ struct ShiftsView: View {
 
                     if store.items.isEmpty {
                         GlassPanel {
-                            ContentUnavailableView(
-                                "Пока нет смен",
-                                systemImage: "calendar.badge.plus",
-                                description: Text("Добавьте первую смену, чтобы начать планирование")
-                            )
-                            .background(.clear)
+                            VStack(spacing: 8) {
+                                Image(systemName: "calendar.badge.plus")
+                                    .font(.system(size: 44))
+                                    .foregroundStyle(.secondary)
+                                    .padding(.bottom, 4)
+                                Text("Пока нет смен")
+                                    .font(.title2.weight(.bold))
+                                    .foregroundStyle(.white)
+                                Text("Добавьте первую смену, чтобы начать планирование")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                    .multilineTextAlignment(.center)
+                            }
+                            .padding()
+                            .frame(maxWidth: .infinity)
                         }
                         .padding(.horizontal)
                         .padding(.top, 8)
