@@ -1,7 +1,29 @@
 import SwiftUI
 
 struct ContentView: View {
-    @ObservedObject var store: ShiftStore
+    @State private var selectedTab = 0
+
+    var body: some View {
+        TabView(selection: $selectedTab) {
+            ShiftsView()
+                .tabItem {
+                    Label("Смены", systemImage: "calendar")
+                }
+                .tag(0)
+
+            FinancesView()
+                .tabItem {
+                    Label("Финансы", systemImage: "banknote")
+                }
+                .tag(1)
+        }
+        .tint(.indigo)
+    }
+}
+
+struct ShiftsView: View {
+    @EnvironmentObject var store: ShiftStore
+    @EnvironmentObject var financialStore: FinancialStore
     @State private var isPresentingEditor = false
     @State private var editingShift: Shift?
 
@@ -58,15 +80,25 @@ struct ContentView: View {
 
                     if store.items.isEmpty {
                         GlassPanel {
-                            ContentUnavailableView(
-                                "Пока нет смен",
-                                systemImage: "calendar.badge.plus",
-                                description: Text("Добавьте первую смену, чтобы начать планирование")
-                            )
-                            .background(.clear)
+                            VStack(spacing: 8) {
+                                Image(systemName: "calendar.badge.plus")
+                                    .font(.system(size: 44))
+                                    .foregroundStyle(.secondary)
+                                    .padding(.bottom, 4)
+                                Text("Пока нет смен")
+                                    .font(.title2.weight(.bold))
+                                    .foregroundStyle(.white)
+                                Text("Добавьте первую смену, чтобы начать планирование")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                    .multilineTextAlignment(.center)
+                            }
+                            .padding()
+                            .frame(maxWidth: .infinity)
                         }
                         .padding(.horizontal)
                         .padding(.top, 8)
+                        Spacer()
                     } else {
                         List {
                             ForEach(store.items) { shift in
@@ -99,11 +131,12 @@ struct ContentView: View {
             }
             .sheet(isPresented: $isPresentingEditor) {
                 ShiftFormView(shift: editingShift) { newShift in
-                    if let editing = editingShift {
+                    if editingShift != nil {
                         store.update(newShift)
                     } else {
                         store.add(newShift)
                     }
+                    financialStore.distributeIncome(store.totalIncome)
                     editingShift = nil
                 }
             }
@@ -115,26 +148,6 @@ struct ContentView: View {
     }
 }
 
-private struct GlassPanel<Content: View>: View {
-    let content: Content
-
-    init(@ViewBuilder content: () -> Content) {
-        self.content = content()
-    }
-
-    var body: some View {
-        content
-            .background(
-                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .fill(.ultraThinMaterial)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 24, style: .continuous)
-                            .strokeBorder(.white.opacity(0.25), lineWidth: 1)
-                    )
-                    .shadow(color: .black.opacity(0.25), radius: 18, x: 0, y: 12)
-            )
-    }
-}
 
 private struct GlassRow: View {
     let shift: Shift
@@ -187,19 +200,9 @@ private struct GlassRow: View {
     }
 }
 
-extension Color {
-    init(hex: String) {
-        let sanitized = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var hexValue: UInt64 = 0
-        Scanner(string: sanitized).scanHexInt64(&hexValue)
-        let mask = 0x000000FF
-        let r = Double((hexValue >> 16) & mask) / 255
-        let g = Double((hexValue >> 8) & mask) / 255
-        let b = Double(hexValue & mask) / 255
-        self.init(red: r, green: g, blue: b)
-    }
-}
 
 #Preview {
-    ContentView(store: ShiftStore())
+    ContentView()
+        .environmentObject(ShiftStore())
+        .environmentObject(FinancialStore())
 }

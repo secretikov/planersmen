@@ -2,11 +2,14 @@ import SwiftUI
 
 @main
 struct PlanersmenApp: App {
-    @StateObject private var store = ShiftStore()
+    @StateObject private var shiftStore = ShiftStore()
+    @StateObject private var financialStore = FinancialStore()
 
     var body: some Scene {
         WindowGroup {
-            ContentView(store: store)
+            ContentView()
+                .environmentObject(shiftStore)
+                .environmentObject(financialStore)
         }
     }
 }

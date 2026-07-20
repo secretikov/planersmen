@@ -7,7 +7,7 @@ targets:
   Planersmen:
     type: application
     platform: iOS
-    deploymentTarget: "17.0"
+    deploymentTarget: "27.0"
     sources:
       - path: Planersmen
         excludes:
