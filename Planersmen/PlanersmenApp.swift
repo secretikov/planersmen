@@ -1,12 +1,13 @@
 import SwiftUI
+import SwiftData
 
 @main
 struct PlanersmenApp: App {
-    @StateObject private var store = ShiftStore()
-
     var body: some Scene {
         WindowGroup {
-            ContentView(store: store)
+            ContentView()
+                .md3Theme()
         }
+        .modelContainer(for: Shift.self)
     }
 }
